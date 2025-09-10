@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>linregmc &#8212; linregmc  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css?v=2bf1fcf8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css?v=6644e6bb" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="API Reference" href="../index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="API Reference"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">linregmc  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">API Reference</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">linregmc</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="module-linregmc">
+<span id="linregmc"></span><h1>linregmc<a class="headerlink" href="#module-linregmc" title="Link to this heading">¶</a></h1>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#linregmc.addnoise" title="linregmc.addnoise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addnoise</span></code></a>(yinp, ysiginp[, nmc, distrib])</p></td>
+<td><p>Adds noise to an array of data points (or a single value).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#linregmc.linreg" title="linregmc.linreg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">linreg</span></code></a>(xinp, yinp[, plot])</p></td>
+<td><p>Performs linear fitting ax+b=y with error analysis using a Monte Carlo approach.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#linregmc.confidence" title="linregmc.confidence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">confidence</span></code></a>(X[, level, plot])</p></td>
+<td><p>Statistical analysis of the data in matrix X.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#linregmc.linconf" title="linregmc.linconf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">linconf</span></code></a>(xinp, yinp, ysig[, nmc, distrib, level, ...])</p></td>
+<td><p>Performs the full Monte Carlo linear regression with confidence calculation.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="linregmc.addnoise">
+<span class="sig-prename descclassname"><span class="pre">linregmc.</span></span><span class="sig-name descname"><span class="pre">addnoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yinp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ysiginp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distrib</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'normal'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/linregmc/linregmc.html#addnoise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#linregmc.addnoise" title="Link to this definition">¶</a></dt>
+<dd><p>Adds noise to an array of data points (or a single value).</p>
+<p>Creates a matrix of nmc vectors with the mean values of y but with
+added random noise of standard deviation ysig.
+You might want to initialize the random number generator in forehand.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>array</em>) – data vector</p></li>
+<li><p><strong>ysig</strong> (<em>array</em>) – standard deviation vector (same length as y, or a single value)</p></li>
+<li><p><strong>nmc</strong> (<em>int</em><em>, </em><em>default 10000</em>) – number of Monte Carlo copies</p></li>
+<li><p><strong>distrib</strong> (<em>str</em><em>, </em><em>default 'normal'</em>) – ‘norm’/’normal’ gives normal distribution
+‘lognorm’/’lognormal’ give lognormal distribution (useful for example if negative results are unphysical)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the data vector with added noise
+(always two-dimensional, but only one column if y was a single value)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.3</span><span class="p">,</span> <span class="mf">3.7</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ysig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y1</span> <span class="o">=</span> <span class="n">addnoise</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ysig</span><span class="p">)</span>  <span class="c1"># different stdev for the three points, normal distribution</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y1</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># (10000, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y2</span> <span class="o">=</span> <span class="n">addnoise</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">distrib</span><span class="o">=</span><span class="s1">&#39;lognorm&#39;</span><span class="p">)</span>   <span class="c1"># same stdev for the three points, lognormal distribution</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y2</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># (1000, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y3</span> <span class="o">=</span> <span class="n">addnoise</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span> <span class="c1"># only one point</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y3</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># (10000, 1)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="linregmc.linreg">
+<span class="sig-prename descclassname"><span class="pre">linregmc.</span></span><span class="sig-name descname"><span class="pre">linreg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xinp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yinp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/linregmc/linregmc.html#linreg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#linregmc.linreg" title="Link to this definition">¶</a></dt>
+<dd><p>Performs linear fitting ax+b=y with error analysis using a Monte Carlo approach.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xinp</strong> (<em>array</em>) – an NM x N matrix: the NX data sets of x values (N data points)</p></li>
+<li><p><strong>yinp</strong> (<em>array</em>) – <dl class="simple">
+<dt>an NY x N matrix: the NY data sets of y values (N data points)</dt><dd><p>NX and NY need not be the same. In particular one may use a
+single data set (without added noise) for one of them.
+The number of fits equals NM = max(NX,NY) and if there are less data
+sets for one of x or y, they are just cyclically reused.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>plot</strong> (<em>boolean</em><em>, </em><em>default False</em>) – an optional argument that specifies whether to plot the chi2 distribution
+to visualize the “goodness-of-fit”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>pp</strong> (<em>array (2 elements)</em>) – single-fit value of each parameter (can be used as the result)</p></li>
+<li><p><strong>psig</strong> (<em>array (2 elements)</em>) – standard deviation of each parameter</p></li>
+<li><p><strong>pchi</strong> (<em>float</em>) – goodness-of-fit, i.e. probability of chi&gt;chi0</p></li>
+<li><p><strong>pmc</strong> (<em>array</em>) – a (NM x 2 matrix, the fitted parameters for all data sets</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.3</span><span class="p">,</span> <span class="mf">3.7</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_mc</span><span class="o">=</span><span class="n">addnoise</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="p">,</span><span class="n">psig</span><span class="p">,</span><span class="n">pchi2</span><span class="p">,</span><span class="n">pmc</span> <span class="o">=</span> <span class="n">linreg</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y_mc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span>   <span class="c1">#[12.517 -0.102]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pmc</span><span class="o">.</span><span class="n">shape</span>   <span class="c1"># (10000, 2)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="linregmc.confidence">
+<span class="sig-prename descclassname"><span class="pre">linregmc.</span></span><span class="sig-name descname"><span class="pre">confidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.683</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/linregmc/linregmc.html#confidence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#linregmc.confidence" title="Link to this definition">¶</a></dt>
+<dd><p>Statistical analysis of the data in matrix X.</p>
+<p>It is assumed that the number of data points are large; all properties
+are calculated from the data itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>array</em>) – data matrix. Data in columns. For example, if X contains data
+from two measurements, data for measurement 1 is in column 1
+and measurement 2 in columns 2.
+If only one column, a 1d-array is also acceptable</p></li>
+<li><p><strong>level</strong> (<em>float</em><em>, </em><em>default 0.683</em>) – desired confidence level</p></li>
+<li><p><strong>plot</strong> (<em>boolean</em><em>, </em><em>default False</em>) – an optional boolean specifying whether to plot histograms for each column
+where a general statistic is shown as a red errorbar (median +/- stdev)
+and the confidence intervals are shown with black lines.
+The red markers at the bottom show the simpler (median +/- err)
+interval which should normally coincide with the confidence interval
+unless the distribution is skew (in which case the confidence interval is more reliable).
+If X has exactly two columns, a scatter plot showing possible correlation between
+the two columns is also produced.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>err</strong> (<em>float</em>) – estimated error in the columns based on selected confidence level.</p></li>
+<li><p><strong>confint</strong> (<em>list</em>) – a list of tuples (low, high), the confidence interval for each input column
+(pconf*100% of values are found within this interval around median)
+If the input x was a 1d-array, a single tuple is returned instead of a list</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.3</span><span class="p">,</span> <span class="mf">3.7</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_mc</span><span class="o">=</span><span class="n">addnoise</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span><span class="p">,</span><span class="n">psig</span><span class="p">,</span><span class="n">pchi2</span><span class="p">,</span><span class="n">pmc</span> <span class="o">=</span> <span class="n">linreg</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y_mc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">err</span><span class="p">,</span><span class="n">confint</span> <span class="o">=</span> <span class="n">confidence</span><span class="p">(</span><span class="n">pmc</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>    <span class="c1"># gives [1.364 0.296]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">confint</span><span class="p">)</span>    <span class="c1"># gives [(11.16, 13.88), (-0.401, 0.190)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="linregmc.linconf">
+<span class="sig-prename descclassname"><span class="pre">linregmc.</span></span><span class="sig-name descname"><span class="pre">linconf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xinp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yinp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ysig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distrib</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'normal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.683</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ytransform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restransform</span></span><span class="o"><span class="pre">=</span></span>

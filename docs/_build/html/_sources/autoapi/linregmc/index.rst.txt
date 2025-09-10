@@ -1,0 +1,128 @@
+linregmc
+========
+
+.. py:module:: linregmc
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   linregmc.addnoise
+   linregmc.linreg
+   linregmc.confidence
+   linregmc.linconf
+
+
+Package Contents
+----------------
+
+.. py:function:: addnoise(yinp, ysiginp, nmc=10000, distrib='normal')
+
+   Adds noise to an array of data points (or a single value).
+
+   Creates a matrix of nmc vectors with the mean values of y but with
+   added random noise of standard deviation ysig.
+   You might want to initialize the random number generator in forehand.
+
+
+   :param y: data vector
+   :type y: array
+   :param ysig: standard deviation vector (same length as y, or a single value)
+   :type ysig: array
+   :param nmc: number of Monte Carlo copies
+   :type nmc: int, default 10000
+   :param distrib: 'norm'/'normal' gives normal distribution
+                   'lognorm'/'lognormal' give lognormal distribution (useful for example if negative results are unphysical)
+   :type distrib: str, default 'normal'
+
+   :returns: the data vector with added noise
+             (always two-dimensional, but only one column if y was a single value)
+   :rtype: array
+
+   .. rubric:: Examples
+
+   >>> y = np.array([1.2, 2.3, 3.7])
+   >>> ysig = np.array([0.1, 0.3, 0.2])
+   >>> y1 = addnoise(y, ysig)  # different stdev for the three points, normal distribution
+   >>> y1.shape  # (10000, 3)
+   >>> y2 = addnoise(y, 0.2, 1000, distrib='lognorm')   # same stdev for the three points, lognormal distribution
+   >>> y2.shape  # (1000, 3)
+   >>> y3 = addnoise(1.5, 0.2) # only one point
+   >>> y3.shape  # (10000, 1)
+
+
+.. py:function:: linreg(xinp, yinp, plot=False)
+
+   Performs linear fitting ax+b=y with error analysis using a Monte Carlo approach.
+
+   :param xinp: an NM x N matrix: the NX data sets of x values (N data points)
+   :type xinp: array
+   :param yinp:
+                an NY x N matrix: the NY data sets of y values (N data points)
+                    NX and NY need not be the same. In particular one may use a
+                    single data set (without added noise) for one of them.
+                    The number of fits equals NM = max(NX,NY) and if there are less data
+                    sets for one of x or y, they are just cyclically reused.
+   :type yinp: array
+   :param plot: an optional argument that specifies whether to plot the chi2 distribution
+                to visualize the "goodness-of-fit".
+   :type plot: boolean, default False
+
+   :returns: * **pp** (*array (2 elements)*) -- single-fit value of each parameter (can be used as the result)
+             * **psig** (*array (2 elements)*) -- standard deviation of each parameter
+             * **pchi** (*float*) -- goodness-of-fit, i.e. probability of chi>chi0
+             * **pmc** (*array*) -- a (NM x 2 matrix, the fitted parameters for all data sets
+
+   .. rubric:: Examples
+
+   >>> x = np.array([0.1, 0.2, 0.3])
+   >>> y = np.array([1.2, 2.3, 3.7])
+   >>> y_mc=addnoise(y, 0.1)
+   >>> pp,psig,pchi2,pmc = linreg(x, y_mc)
+   >>> print(pp)   #[12.517 -0.102]
+   >>> pmc.shape   # (10000, 2)
+
+
+.. py:function:: confidence(X, level=0.683, plot=False)
+
+   Statistical analysis of the data in matrix X.
+
+   It is assumed that the number of data points are large; all properties
+   are calculated from the data itself.
+
+   :param X: data matrix. Data in columns. For example, if X contains data
+             from two measurements, data for measurement 1 is in column 1
+             and measurement 2 in columns 2.
+             If only one column, a 1d-array is also acceptable
+   :type X: array
+   :param level: desired confidence level
+   :type level: float, default 0.683
+   :param plot: an optional boolean specifying whether to plot histograms for each column
+                where a general statistic is shown as a red errorbar (median +/- stdev)
+                and the confidence intervals are shown with black lines.
+                The red markers at the bottom show the simpler (median +/- err)
+                interval which should normally coincide with the confidence interval
+                unless the distribution is skew (in which case the confidence interval is more reliable).
+                If X has exactly two columns, a scatter plot showing possible correlation between
+                the two columns is also produced.
+   :type plot: boolean, default False
+
+   :returns: * **err** (*float*) -- estimated error in the columns based on selected confidence level.
+             * **confint** (*list*) -- a list of tuples (low, high), the confidence interval for each input column
+               (pconf*100% of values are found within this interval around median)
+               If the input x was a 1d-array, a single tuple is returned instead of a list
+
+   .. rubric:: Examples
+
+   >>> x = np.array([0.1, 0.2, 0.3])
+   >>> y = np.array([1.2, 2.3, 3.7])
+   >>> y_mc=addnoise(y, 0.1)
+   >>> pp,psig,pchi2,pmc = linreg(x, y_mc)
+   >>> err,confint = confidence(pmc, 0.95)
+   >>> print(err)    # gives [1.364 0.296]
+   >>> print(confint)    # gives [(11.16, 13.88), (-0.401, 0.190)]
+
+
+.. py:function:: linconf(xinp, yinp, ysig, nmc=10000, distrib='normal', lev
