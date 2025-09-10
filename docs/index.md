@@ -1,5 +1,6 @@
 ```{include} ../README.md
 ```
+Click API reference in the left menu to see the detailed documentation.
 
 ```{toctree}
 :maxdepth: 1
@@ -7,7 +8,5 @@
 
 example.ipynb
 changelog.md
-contributing.md
-conduct.md
 autoapi/index
 ```

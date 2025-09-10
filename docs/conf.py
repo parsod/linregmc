@@ -36,11 +36,12 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 #
 html_theme = "sphinx_rtd_theme"
 
-html_theme_options = {
-    "collapse_navigation": False,  # Keep all toctree items expanded
-    "navigation_depth": 4,         # Adjust depth of sidebar links
-    "includehidden": True,         # Include hidden toc entries
-}
+#html_theme_options = {
+#    "collapse_navigation": False,  # Keep all toctree items expanded
+#    "navigation_depth": 4,         # Adjust depth of sidebar links
+#    "includehidden": True,         # Include hidden toc entries
+#}
+
 def skip_submodules(app, what, name, obj, skip, options):
     if what == "module":
         skip = True
