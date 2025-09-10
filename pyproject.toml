@@ -5,6 +5,10 @@ description = "Linear regression with Monte Carlo error analysis"
 authors = ["Pär Söderhjelm"]
 license = "MIT"
 readme = "README.md"
+packages = [
+    { include = "linregmc", from = "src" }
+]
+
 
 [tool.poetry.dependencies]
 python = "^3.12"
