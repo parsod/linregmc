@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.matlib import repmat,randn
+import logging
 
 def addnoise(yinp,ysiginp,nmc=10000,distrib='normal'):	
 	"""Adds noise to an array of data points (or a single value).
@@ -63,7 +64,8 @@ def addnoise(yinp,ysiginp,nmc=10000,distrib='normal'):
 		raise Exception('Distribution named "' + distrib + '" is not recognized.')
 
 
-def linreg(xinp, yinp, plot = False):
+
+def linreg(xinp, yinp, ndeg=1, fitfunc = None, weighted=True, plot = False):
 	"""Performs linear fitting ax+b=y with error analysis using a Monte Carlo approach.
 	
 	Parameters
@@ -76,20 +78,28 @@ def linreg(xinp, yinp, plot = False):
 		single data set (without added noise) for one of them.
 		The number of fits equals NM = max(NX,NY) and if there are less data
 		sets for one of x or y, they are just cyclically reused.
+	ndeg : int, default 1
+		the degree of the polynomial used for fitting
+	fitfunc : list, optional
+		a list of functions of x that are used as basis functions instead of a polonymial
+		(ndeg and fitfunc cannot both be specified)
+	weighted: boolean, default True
+		weight the importance of each data point by 1/stdev (recommended)
 	plot : boolean, default False
 	    an optional argument that specifies whether to plot the chi2 distribution
 	    to visualize the "goodness-of-fit".
 	
 	Returns
 	-------
-	pp  : array (2 elements)
+	pp  : array (ndeg+1 elements)
 		single-fit value of each parameter (can be used as the result)
-	psig  : array (2 elements)
+	psig  : array (ndeg+1 elements)
 		standard deviation of each parameter
-	pchi : float
+	pchi2 : float
 		goodness-of-fit, i.e. probability of chi>chi0
+		Note: not well-defined
 	pmc  : array
-		a (NM x 2 matrix, the fitted parameters for all data sets
+		a (NM x (ndeg+1) matrix, the fitted parameters for all data sets
 		
 	Examples
 	--------
@@ -98,9 +108,14 @@ def linreg(xinp, yinp, plot = False):
 	>>> y_mc=addnoise(y, 0.1)
 	>>> pp,psig,pchi2,pmc = linreg(x, y_mc)	
 	>>> print(pp)   #[12.517 -0.102]
-	>>> pmc.shape   # (10000, 2)	
+	>>> print(pmc.shape)   # (10000, 2)	
+	>>> pp,psig,pchi2,pmc = linreg(x, y_mc, fitfunc=[lambda x: np.exp(x), lambda x: 1]) #Fit to y=ae^x+b instead	
 	"""
 
+	if fitfunc != None and ndeg==1:  #Assume that ndeg was not specified, there is no way to know...
+		ndeg = len(fitfunc)-1
+	elif fitfunc != None and ndeg!=1: 
+		raise Exception('Only one of ndeg and fitfunc can be specified.')
 	if np.ndim(xinp) == 1:
 		x=xinp.reshape((1,np.size(xinp)))
 	else:
@@ -112,38 +127,55 @@ def linreg(xinp, yinp, plot = False):
 	if np.size(x,1) != np.size(y,1):
 		raise Exception('Number of columns in x and y must be equal')
 	N=np.size(x,1)
-	n=1 #always linear fit
-	
-	#Perform single fit to get the base chi2 value
-	xs=np.median(x, axis=0)
-	ys=np.median(y, axis=0)   #Reproduces original data points independent of distribution
-	sig=np.std(x, axis=0)+np.std(y, axis=0)  #This only makes sense if either x or y is a single set
-	
-	Xt=np.stack((xs, np.ones(N)), axis=1)
-	X=np.stack((xs/sig, np.ones(N)/sig), axis=1)
-	Y=ys/sig
-	pp=np.linalg.lstsq(X,Y, rcond=None)[0]    
-	chi2 = sum((Y - np.matmul(X,pp))**2)
-	subtract=ys - np.matmul(Xt,pp)
-	
-	
 	xn=np.size(x,0)
 	yn=np.size(y,0)
+
+
+	def buildmat(xx,ss=1.0):
+		if fitfunc==None:
+			return np.stack([xx**k/ss for k in range(ndeg,0,-1)]+[np.ones(N)/ss], axis=1)
+		else:
+			return np.stack([(np.zeros(N)+func(xx))/ss for func in fitfunc], axis=1)
+
+    
+	xs=np.median(x, axis=0)
+	ys=np.median(y, axis=0)   #Reproduces original data points independent of distribution
+	if weighted:
+		deltax=np.std(xs)/(N*100)   #gives deltax with correct order of magnitude
+		pnow=np.linalg.lstsq(buildmat(xs), ys, rcond=None)[0]   #parameters if no weights are used
+		fprime=(np.matmul(buildmat(xs+deltax),pnow)-np.matmul(buildmat(xs-deltax),pnow))/(2*deltax)  #numerical derivative
+		sig=np.sqrt(np.var(y, axis=0)+fprime**2*np.var(x, axis=0))  #Standard error propagation
+		#TODO: If weighting is important, the estimation of sig should be done iteratively because fprime depends on the fit and thus on sig
+		if xn==1 and yn==1:
+			sig=1.0
+			logging.warning('Single data sets, using unweighted fit instead')
+		elif np.any(sig==0):
+			sig=1.0
+			logging.warning('Points with no variation encountered, using unweighted fit instead')
+	else:
+		sig=1.0
+		
+	#Perform single fit to get the base chi2 value
+	Xt=buildmat(xs)
+	X=buildmat(xs,sig)
+	YS=ys/sig
+	pp=np.linalg.lstsq(X,YS, rcond=None)[0]
+	yfit=np.matmul(Xt,pp)  # y(xs) value according to model   
+	chi2 = sum((YS - np.matmul(X,pp))**2)
+
 	nmc = max(xn,yn)
-	pmc = np.zeros((nmc,n+1)) 
+	pmc = np.zeros((nmc,ndeg+1)) 
 	chi2mc = np.zeros(nmc)
 	for i in range(nmc):
-		X=np.stack((x[i%xn,:]/sig,np.ones(N)/sig),axis=1)
-		Y=(y[i%yn,:]-subtract)/sig
+		X=buildmat(x[i%xn,:],sig)
+		Y=(yfit+y[i%yn,:]-ys)/sig   
 		p=np.linalg.lstsq(X,Y, rcond=None)[0] 
 		pmc[i,:]=p
 		chi2mc[i] = sum((Y - np.matmul(X,p))**2)
-	
-	pmean = np.mean(pmc,0)    #This is not used, as the single fit (pp) is returned for compatibility with the MATLAB script
+
 	psig = np.std(pmc,0)
-	
-	#Compute pchi2
-	pchi2=sum(chi2mc>chi2)/nmc
+	pmean = np.mean(pmc,0) #Not used
+	pchi2=sum(chi2mc>chi2)/nmc     #Percentage of MC samples having greater chi2 than the observation
 	
 	if plot:
 		import matplotlib.pyplot as plt
@@ -158,8 +190,6 @@ def linreg(xinp, yinp, plot = False):
 	return (pp,psig,pchi2,pmc)
 
 
-#
-	
 
 def confidence(X, level=0.683, plot=False):
 	"""Statistical analysis of the data in matrix X.

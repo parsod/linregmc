@@ -2,6 +2,11 @@
 
 <!--next-version-placeholder-->
 
+## v0.1.0 (24/09/2025)
+
+- added support for any degree of polynomials as well as user-defined functions
+- corrected the pchi2 calculation so it works for noises in both x and y 
+
 ## v0.0.4 (24/09/2025)
 
 - removed accidental restriction to python >3.12 

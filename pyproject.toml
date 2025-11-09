@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "linregmc"
-version = "0.0.4"
+version = "0.1.0"
 description = "Linear regression with Monte Carlo error analysis"
 authors = ["Pär Söderhjelm"]
 license = "MIT"
