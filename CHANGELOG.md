@@ -2,7 +2,11 @@
 
 <!--next-version-placeholder-->
 
-## v0.1.0 (24/09/2025)
+## v0.1.1 (11/11/2025)
+
+- changed the default order of the coefficients to correspond to numpy.polynomial.polynomial.polyfit
+
+## v0.1.0 (9/11/2025)
 
 - added support for any degree of polynomials as well as user-defined functions
 - corrected the pchi2 calculation so it works for noises in both x and y 

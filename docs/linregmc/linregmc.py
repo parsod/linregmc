@@ -80,6 +80,8 @@ def linreg(xinp, yinp, ndeg=1, fitfunc = None, weighted=True, plot = False):
 		sets for one of x or y, they are just cyclically reused.
 	ndeg : int, default 1
 		the degree of the polynomial used for fitting
+		(the ordering of the obtained coefficients is from 0 to ndeg, i.e.
+		corresponds to numpy.polynomial.polynomial.polyfit)
 	fitfunc : list, optional
 		a list of functions of x that are used as basis functions instead of a polonymial
 		(ndeg and fitfunc cannot both be specified)
@@ -107,7 +109,7 @@ def linreg(xinp, yinp, ndeg=1, fitfunc = None, weighted=True, plot = False):
 	>>> y = np.array([1.2, 2.3, 3.7])
 	>>> y_mc=addnoise(y, 0.1)
 	>>> pp,psig,pchi2,pmc = linreg(x, y_mc)	
-	>>> print(pp)   #[12.517 -0.102]
+	>>> print(pp)   #[-0.102 12.517]
 	>>> print(pmc.shape)   # (10000, 2)	
 	>>> pp,psig,pchi2,pmc = linreg(x, y_mc, fitfunc=[lambda x: np.exp(x), lambda x: 1]) #Fit to y=ae^x+b instead	
 	"""
@@ -133,7 +135,7 @@ def linreg(xinp, yinp, ndeg=1, fitfunc = None, weighted=True, plot = False):
 
 	def buildmat(xx,ss=1.0):
 		if fitfunc==None:
-			return np.stack([xx**k/ss for k in range(ndeg,0,-1)]+[np.ones(N)/ss], axis=1)
+			return np.stack([np.ones(N)/ss]+[xx**k/ss for k in range(1,ndeg+1)], axis=1)
 		else:
 			return np.stack([(np.zeros(N)+func(xx))/ss for func in fitfunc], axis=1)
 
@@ -280,8 +282,8 @@ def confidence(X, level=0.683, plot=False):
 			axes = [fig.add_subplot(gs[0, 1]), fig.add_subplot(gs[1, 1])]
 			ax_left.set_aspect('equal')
 			ax_left.scatter(X[:,0],X[:,1],s=0.1)
-			ax_left.set_xlabel('a')
-			ax_left.set_ylabel('b')
+			ax_left.set_xlabel(r'$c_0$')
+			ax_left.set_ylabel(r'$c_1$')
 			ax_left.plot([plow[0],plow[0]],[np.min(X[:,1]),np.max(X[:,1])],'k--')
 			ax_left.plot([phigh[0],phigh[0]],[np.min(X[:,1]),np.max(X[:,1])],'k--')
 			ax_left.plot([np.min(X[:,0]),np.max(X[:,0])],[plow[1],plow[1]], 'k--')
@@ -300,7 +302,7 @@ def confidence(X, level=0.683, plot=False):
 			ax.plot([phigh[i],phigh[i]],[0,0.8*ycent],'k--')
 			ax.plot([median[i]-err[i], median[i]-err[i]], [0,0.1*ycent],'r-')
 			ax.plot([median[i]+err[i], median[i]+err[i]], [0,0.1*ycent],'r-')
-			ax.set_xlabel(chr(ord('a')+i))  #Name the variables a,b,c...
+			ax.set_xlabel(r'$c_{%d}$'%i)  #Name the variables c0,c1...
 			ax.set_yticks([])
 	
 		plt.tight_layout()
